@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: postgres
+    database: raw
+    schema: public
+    tables:
+      - name: events
+        description: " "
+      - name: products
+        description: " "
+      - name: users
+        description: " "
+      - name: orders
+        description: " "
+      - name: order_items
+        description: " "
+      - name: addresses
+        description: " "
+      - name: promos
+        description: " "
