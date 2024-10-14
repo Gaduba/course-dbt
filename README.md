@@ -57,4 +57,4 @@
 - Answer: 16.327586
 
 ## GitHub Repository
-[Link to your GitHub repository](https://github.com/Gaduba/course-dbt.git)
+[Link to my GitHub repository](https://github.com/Gaduba/course-dbt.git)
