@@ -1,18 +1,60 @@
-# Analytics engineering with dbt
+# Greenery DBT Project
 
-Template repository for the projects and environment of the course: Analytics engineering with dbt
+## SQL Queries and Answers
 
-# Updating dbt version
+### 1. How many users do we have?
+- SQL Query:
+  ```sql
+  SELECT COUNT(distinct user_id) FROM stg_users;
+  ```
+- Answer: 130
 
-To update dbt version you need to edit `.gitpod.yml` file and put a specific verion of dbt adapter you want to use:
+### 2. On average, how many orders do we receive per hour?
+- SQL Query:
+  ```sql
+  SELECT AVG(order_count) FROM(
+    SELECT date_trunc('hour',created_at)AS hour, 
+    COUNT(order_id) AS order_count)
+    FROM stg_orders
+    GROUP BY hour;
+  ```
+- Answer: 7.520833
 
-```yaml
-image: ghcr.io/dbt-labs/dbt-snowflake:1.8.3. # update version here
-...
-```
+### 3. On average, how long does an order take from being placed to being delivered?
+- SQL Query:
+  ```sql
+  SELECT AVG(DATEDIFF('hour',created_at, ddelivered_at)) AS avg_delivery_time 
+  FROM stg_orders;
+  ```
+- Answer: 93.403279
 
-If you run `dbt --version` you may see that dbt-core might be slightly behind the latest version, but that's fine as soon as adapter version is up-to-date.
+### 4. How many users have only made one purchase? Two purchases? Three+ purchases?
+- SQL Query:
+  ```sql
+  WITH purchases AS (SELECT user_id, COUNT(order_id) AS purchase_count
+  FROM stg_orders
+  GROUP BY user_id
+  HAVING purchase_count = 1 
+  OR purchase_count = 2
+  OR purchase_count >= 3)
+  
+  SELECT count(DISTINCT user_id), purchase_count
+  FROM purchase
+  GROUP BY purchase_count;
+  ```
+- Answer: 1 purchase = 8 users
+2 purchases = 28 users
+3+ purchases = 71 users
 
+### 5. On average, how many unique sessions do we have per hour?
+- SQL Query:
+  ```sql
+  SELECT AVG(session_count) FROM (SELECT date_trunc('hour', created_at) AS hour, 
+  COUNT (DISTINCTY session_id) AS session_count
+  FROM stg_events
+  GROUP BY hour);
+  ```
+- Answer: 16.327586
 
-## License
-GPL-3.0
+## GitHub Repository
+[Link to your GitHub repository](https://github.com/Gaduba/course-dbt.git)
