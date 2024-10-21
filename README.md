@@ -1,60 +1,47 @@
-# Greenery DBT Project
+# Greenery DBT Data Modeling Project
 
-## SQL Queries and Answers
 
-### 1. How many users do we have?
-- SQL Query:
-  ```sql
-  SELECT COUNT(distinct user_id) FROM stg_users;
-  ```
-- Answer: 130
+## Introduction
 
-### 2. On average, how many orders do we receive per hour?
-- SQL Query:
-  ```sql
-  SELECT AVG(order_count) FROM(
-    SELECT date_trunc('hour',created_at)AS hour, 
-    COUNT(order_id) AS order_count)
-    FROM stg_orders
-    GROUP BY hour;
-  ```
-- Answer: 7.520833
+This dbt project focuses on creating a scalable and maintainable data structure for Greenery, an e-commerce platform, by utilizing dbt to organize, transform, and model raw data from PostgreSQL into actionable insights for various business units. The project follows a structured approach, covering essential dbt concepts like staging models, fact/dimension models, snapshots, and data marts, while aiming to address specific business questions related to user behavior, product performance, and marketing activities
 
-### 3. On average, how long does an order take from being placed to being delivered?
-- SQL Query:
-  ```sql
-  SELECT AVG(DATEDIFF('hour',created_at, ddelivered_at)) AS avg_delivery_time 
-  FROM stg_orders;
-  ```
-- Answer: 93.403279
+### Project Structure and Key Components:
+  #### 1. Project Setup
 
-### 4. How many users have only made one purchase? Two purchases? Three+ purchases?
-- SQL Query:
-  ```sql
-  WITH purchases AS (SELECT user_id, COUNT(order_id) AS purchase_count
-  FROM stg_orders
-  GROUP BY user_id
-  HAVING purchase_count = 1 
-  OR purchase_count = 2
-  OR purchase_count >= 3)
+- Initialized a dbt project named greenery, connecting to a PostgreSQL data source for raw data.
+- Configured dbt_project.yml and profiles.yml to ensure proper connection with credentials and schemas in Snowflake.
+- Built a clear directory structure with models, snapshots, and source files to ensure modular and scalable development.
+
+  #### 2. Staging Models
+
+- Created staging models for all seven source tables from PostgreSQL, located in the models/staging/postgres/ folder.
+- The staging models follow dbt best practices, avoiding SELECT * and explicitly selecting, renaming, and casting columns for clarity and consistency.
+- These models serve as a clean and standardized foundation for subsequent transformations.
+
+  #### 3. Snapshots
+
+- Set up a snapshot model for monitoring changes in the products table, tracking the inventory column over time.
+- Snapshots allow for historical analysis of data changes (e.g., product stock levels, pricing fluctuations) by capturing point-in-time records.
+- Configured the snapshot to build in the personal Snowflake schema to align with dbt's dynamic target variables.
   
-  SELECT count(DISTINCT user_id), purchase_count
-  FROM purchase
-  GROUP BY purchase_count;
-  ```
-- Answer: 1 purchase = 8 users
-2 purchases = 28 users
-3+ purchases = 71 users
+  #### 4. Data Marts
 
-### 5. On average, how many unique sessions do we have per hour?
-- SQL Query:
-  ```sql
-  SELECT AVG(session_count) FROM (SELECT date_trunc('hour', created_at) AS hour, 
-  COUNT (DISTINCTY session_id) AS session_count
-  FROM stg_events
-  GROUP BY hour);
-  ```
-- Answer: 16.327586
+- Created dedicated marts for various business units:
+Product Mart: Tracks daily page views, orders by product, and product performance, helping to analyze traffic-to-purchase conversion rates.
+Core Mart: Includes models like fact_orders, dim_products, and dim_users to handle key business metrics.
+Marketing Mart: Aggregates order information at the user level, providing insights into user behavior and marketing effectiveness.
 
-## GitHub Repository
-[Link to my GitHub repository](https://github.com/Gaduba/course-dbt.git)
+#### 5. Answering Business Questions
+
+- Used dbt models to answer key questions such as user repeat rate, average delivery times, and user engagement metrics (e.g., session counts, purchases).
+Developed SQL queries to calculate metrics like average order time, user purchase frequency, and other KPIs, with results stored in the marts.
+
+#### 6. Data Analysis and Funnel Insights
+
+- Designed models to understand the product funnel by analyzing user movement through different stages (e.g., product views to purchases).
+Identified critical drop-off points where users disengage, providing insights to improve user experience and conversion rates.
+Version Control and Collaboration
+
+#### 7 Leveraged GitHub for version control, regularly pushing updates and tracking changes to ensure seamless collaboration and deployment.
+- Outcome
+By structuring the data in a logical, layered approach, this dbt project enables the Greenery team to answer complex business questions, track performance metrics, and generate insights to drive product, user, and marketing strategies. The project emphasizes flexibility, scalability, and maintainability, ensuring the data models can evolve alongside the business’s growing needs.
