@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: fct_product_performance
+    columns:
+      - name: product_id
+        tests:
+          - not_null

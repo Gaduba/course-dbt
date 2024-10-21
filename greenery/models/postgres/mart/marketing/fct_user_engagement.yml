@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: fct_user_engagement
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+
