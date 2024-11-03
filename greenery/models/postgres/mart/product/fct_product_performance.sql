@@ -3,7 +3,9 @@ WITH product_performance AS (
         pp.product_id,
         pp.product_name,
         COALESCE(pp.page_views, 0) AS page_views,
-        COALESCE(pp.adds_to_cart, 0) AS adds_to_cart,
+        COALESCE(pp.add_to_carts, 0) AS adds_to_cart,
+        COALESCE(pp.checkouts, 0) AS checkout,
+        COALESCE(pp.package_shippeds, 0) AS package_shipped,
         COALESCE(oi.total_quantity, 0) AS total_quantity_sold,
         COALESCE(oi.total_revenue, 0) AS total_revenue
     FROM {{ ref('i_product_views') }} pp
