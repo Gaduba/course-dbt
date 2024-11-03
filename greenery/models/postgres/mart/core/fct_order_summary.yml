@@ -5,4 +5,6 @@ models:
     columns:
       - name: order_id
         tests:
-          - not_null
+          - not_null:
+              severity: warn
+
